@@ -20,10 +20,20 @@ class D2Directive(Directive):
     has_content = True
 
     def generate_diagram(self, content, name, alt):
-        builder = self.state.document.settings.env.app.builder
-        outdir = os.path.join(builder.outdir, builder.imagedir)
-
         env = self.state.document.settings.env
+        pagename = self.state.document.settings.env.docname
+        builder = self.state.document.settings.env.app.builder
+
+        out_filename = builder.get_outfilename(pagename)
+        outdir = os.path.dirname(out_filename)
+        image_dir = "_images"
+        if hasattr(env.config, "html_static_path") and env.config.html_static_path:
+            assert (
+                len(env.config.html_static_path) == 1
+            ), "Only one html_static_path is supported"
+            image_dir = env.config.html_static_path[0]
+        image_dir = os.path.join(outdir, image_dir)
+
         d2_path = env.config.d2_config.get("d2_path")
         format = env.config.d2_config.get("file_format")
         d2_args = env.config.d2_config.get("d2_args")
@@ -37,7 +47,7 @@ class D2Directive(Directive):
             f.write("\n".join(content))
 
         # Run d2
-        target = os.path.join(outdir, f"{name}.{format}")
+        target = os.path.join(image_dir, f"{name}.{format}")
         result = os.system(f"{d2_path} {d2_args} diagram.d2 '{target}'")
         if result != 0:
             document.reporter.error(
@@ -85,6 +95,7 @@ class D2Directive(Directive):
                 # Reset remaining
                 remaining_content = []
                 # of form ":key: value"
+                line = line[1:]
                 key, value = line.split(":", 1)
                 key = key.strip()
                 value = value.strip()
@@ -118,7 +129,10 @@ class D2Directive(Directive):
         diagram = self.generate_diagram(content, name, alt)
         if diagram is None:
             return []
-        wrapper_node = nodes.figure()
+        if "width" in options:
+            wrapper_node = nodes.figure(width=options["width"])
+        else:
+            wrapper_node = nodes.figure()
         wrapper_node += diagram
         if "caption" in options:
             caption = nodes.caption(text=options["caption"])
