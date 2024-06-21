@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=40.6.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "sphinxcontrib-d2"
+dynamic = ["version", "readme"]
+description = "Sphinx extension for generating diagrams from D2 files"
+license = {text = "MIT"}
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules"]
+requires-python = ">=3.7"
+authors = [
+    {name = "Travis Collins", email="travis.collins@analog.com"},
+]
+maintainers = [
+    {name = "Travis Collins", email="travis.collins@analog.com"},
+    {name = "Analog Devices, Inc"}
+]
+dependencies = [
+    'sphinx',
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "sphinxcontrib_d2.__version__"}
+readme = {file = "README.md", content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sphinxcontrib_d2*"]
+exclude = ["tests*"]
+namespaces = true
+
+# [project.optional-dependencies]
+# jesd = [
+#     "paramiko"
+# ]
+
+# [project.entry-points.pytest11]
+# pybench = "bench.plugin"
+
+[project.urls]
+homepage = "https://tfcollins.github.io/sphinxcontrib-d2/"
+documentation = "https://tfcollins.github.io/sphinxcontrib-d2/"
+repository = "https://github/tfcollins/sphinxcontrib-d2/"
+
+[tool.isort]
+multi_line_output=3
+include_trailing_comma="True"
+force_grid_wrap=0
+use_parentheses="True"
+line_length=88
+
+[tool.mypy]
+ignore_missing_imports="true"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+# addopts = "--custom-hw-map=test/emu/hardware_map.yml --emu-xml-dir=test/emu/devices"
+testpaths = [
+    "tests",
+]
